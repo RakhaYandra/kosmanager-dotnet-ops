@@ -1,0 +1,34 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: kosmanager
+      MYSQL_USER: kos
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-kospass}
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: https://github.com/RakhaYandra/kosmanager-dotnet.git
+      dockerfile: KosManager.Api/Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_CONN: "server=mysql;port=3306;database=kosmanager;user=kos;password=${MYSQL_PASSWORD:-kospass}"
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET min 32 char}
+      NOTIFY_CHANNEL: mock
+    ports:
+      - "8090:8090"
+
+volumes:
+  mysql-data: {}

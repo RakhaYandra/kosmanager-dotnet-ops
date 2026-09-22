@@ -1,0 +1,36 @@
+# sumber kebenaran tiket (5 tiket). tools/build_tickets.py -> KosManager-Tickets.xlsx
+- id: TIK-01
+  severity: high
+  title: Login 500 — JWT secret < 256 bit (IDX10720)
+  repro: login dengan secret 24 char
+  fix: secret >= 32 char + .env.example menegaskan
+  prevention: "CI grep panjang secret (manual: README + runbook #1)"
+  status: closed
+- id: TIK-02
+  severity: high
+  title: EF NU1605 downgrade Pomelo 9 vs EF 8
+  repro: dotnet add tanpa versi di net8
+  fix: pin Pomelo 8.0.3 + EF 8.0.13
+  prevention: pin versi di docs quickstart
+  status: closed
+- id: TIK-03
+  severity: high
+  title: Blazor login bounce + drawer hilang (prerender tanpa JS)
+  repro: login -> / -> /login
+  fix: prerender false + session storage + forceLoad + islands
+  prevention: ADR-004
+  status: closed
+- id: TIK-04
+  severity: medium
+  title: MudDrawer selalu overlay
+  repro: Mini + Open=true tanpa subscription
+  fix: rail custom + UiState
+  prevention: ADR-004
+  status: closed
+- id: TIK-05
+  severity: medium
+  title: CI qa merah — path relatif + assertion order-dependent
+  repro: push pertama/ kedua
+  fix: ${{ github.workspace }} absolut + >= 6
+  prevention: pola path absolut di semua workflow
+  status: closed

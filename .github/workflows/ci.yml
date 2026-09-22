@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash -n backup-roundtrip.sh && echo "syntax OK"
-      - run: docker compose config > /dev/null && echo "compose OK"
+      - run: JWT_SECRET=dummy-ci-min-32-karakter-aman MYSQL_PASSWORD=kospass docker compose config > /dev/null && echo "compose OK"
       - run: grep -c "^| [0-9]" runbook.md
       - run: test -f SLA.md && test -f FAQ.md && echo "docs OK"

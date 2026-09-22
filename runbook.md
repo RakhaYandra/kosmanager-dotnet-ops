@@ -34,3 +34,8 @@ Jadwal produksi yang disarankan: cron harian + retensi 7 hari (contoh di `cron.e
 | 13 | `dotnet ef` tak ketemu | tool belum install | `dotnet tool install -g dotnet-ef --version 8.0.13` |
 | 14 | Fonnte 401 | token salah/expired | regenerate dashboard Fonnte |
 | 15 | Telegram `chat not found` | user belum /start | user /start dulu, ambil via getUpdates |
+| 16 | MudDialog/Snackbar tak muncul | provider Mud* statis di layout | island `Providers.razor` interaktif |
+| 17 | MudDrawer selalu overlay | Mini + Open=true + tanpa subscription | rail custom + `UiState` + offset appbar 64px |
+| 18 | Login bounce /login→/→/login | guard + prerender tanpa JS | `prerender:false` + session + forceLoad |
+| 19 | Shell hang saat `setsid...& disown` | `disown` tanpa job control | pakai `nohup ... &` langsung (tanpa disown) |
+| 20 | MiniProfiler 404 | lupa `UseMiniProfiler()` / route | `RouteBasePath = "/profiler"` + middleware sebelum auth |

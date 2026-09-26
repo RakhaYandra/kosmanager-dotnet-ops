@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Throwaway: hanya dipakai untuk docker compose config di bawah.
-      JWT_SECRET: ci-dummy-min-32-karakter-aman
+      JWT_SECRET: ci-dummy-secret-min-32-karakter-aman
       MYSQL_PASSWORD: ci-dummy-password
       MYSQL_ROOT_PASSWORD: ci-dummy-root
       EXPECTED_TROUBLESHOOTING_ENTRIES: "10"
@@ -38,6 +38,11 @@ jobs:
           [ -z "$dups" ] || { echo "::error::entri duplikat di runbook:"; echo "$dups"; exit 1; }
           echo "no duplicates"
       - run: test -f SLA.md && test -f FAQ.md && echo "docs OK"
-      - run: git ls-files | grep -qE '\.xlsx$|^backup-.*\.sql$' \
-          && { echo "::error::artefak generated/berisi data ikut ter-commit"; exit 1; } \
-          || echo "no committed artifacts"
+      - name: no committed artifacts
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -qE '\.xlsx$|^backup-.*\.sql$'; then
+            echo "::error::artefak generated/berisi data ikut ter-commit"
+            exit 1
+          fi
+          echo "no committed artifacts"

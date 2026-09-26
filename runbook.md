@@ -13,9 +13,14 @@ Login demo: `owner@kos.local / owner123`.
 ## Backup
 
 `./backup-roundtrip.sh` — mysqldump + restore ke DB uji + bandingkan COUNT.
-Jadwal produksi yang disarankan: cron harian + retensi 7 hari (contoh di `cron.example`).
+Butuh `MYSQL_PASSWORD` + `MYSQL_ROOT_PASSWORD` di env (lihat `.env.example`).
+Jadwal produksi yang disarankan — cron harian, retensi 7 hari:
 
-## Troubleshooting (15 entri ringkas)
+```cron
+17 3 * * * cd /path/ke/ops/repo && BACKUP_DIR=/var/backups/kos ./backup-roundtrip.sh >> /var/log/kos-backup.log 2>&1
+```
+
+## Troubleshooting (19 entri ringkas)
 
 | # | Gejala | Penyebab | Fix |
 |---|---|---|---|
@@ -36,6 +41,5 @@ Jadwal produksi yang disarankan: cron harian + retensi 7 hari (contoh di `cron.e
 | 15 | Telegram `chat not found` | user belum /start | user /start dulu, ambil via getUpdates |
 | 16 | MudDialog/Snackbar tak muncul | provider Mud* statis di layout | island `Providers.razor` interaktif |
 | 17 | MudDrawer selalu overlay | Mini + Open=true + tanpa subscription | rail custom + `UiState` + offset appbar 64px |
-| 18 | Login bounce /login→/→/login | guard + prerender tanpa JS | `prerender:false` + session + forceLoad |
-| 19 | Shell hang saat `setsid...& disown` | `disown` tanpa job control | pakai `nohup ... &` langsung (tanpa disown) |
-| 20 | MiniProfiler 404 | lupa `UseMiniProfiler()` / route | `RouteBasePath = "/profiler"` + middleware sebelum auth |
+| 18 | Shell hang saat `setsid...& disown` | `disown` tanpa job control | pakai `nohup ... &` langsung (tanpa disown) |
+| 19 | MiniProfiler 404 | lupa `UseMiniProfiler()` / route | `RouteBasePath = "/profiler"` + middleware sebelum auth |

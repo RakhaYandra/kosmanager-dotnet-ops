@@ -3,9 +3,41 @@ on: [push, pull_request]
 jobs:
   ci:
     runs-on: ubuntu-latest
+    env:
+      # Throwaway: hanya dipakai untuk docker compose config di bawah.
+      JWT_SECRET: ci-dummy-min-32-karakter-aman
+      MYSQL_PASSWORD: ci-dummy-password
+      MYSQL_ROOT_PASSWORD: ci-dummy-root
+      EXPECTED_TROUBLESHOOTING_ENTRIES: "19"
     steps:
       - uses: actions/checkout@v4
       - run: bash -n backup-roundtrip.sh && echo "syntax OK"
-      - run: JWT_SECRET=dummy-ci-min-32-karakter-aman MYSQL_PASSWORD=kospass docker compose config > /dev/null && echo "compose OK"
-      - run: grep -c "^| [0-9]" runbook.md
+      - run: docker compose config > /dev/null && echo "compose OK"
+      # Compose harus GAGAL tanpa kredensial — itu kontraknya.
+      - name: compose rejects missing credentials
+        run: |
+          set -euo pipefail
+          if env -u JWT_SECRET -u MYSQL_PASSWORD -u MYSQL_ROOT_PASSWORD \
+             docker compose config > /dev/null 2>&1; then
+            echo "::error::compose start tanpa kredensial — password default tidak boleh ada"
+            exit 1
+          fi
+          echo "fail-fast OK"
+      # Dulu hanya `grep -c` (print, tanpa assert). Sekarang benar-benar diuji.
+      - name: runbook entry count
+        run: |
+          set -euo pipefail
+          n=$(grep -c "^| [0-9]" runbook.md)
+          echo "runbook entries: $n"
+          [ "$n" -eq "$EXPECTED_TROUBLESHOOTING_ENTRIES" ] || {
+            echo "::error::runbook punya $n entri, workflow mengharapkan $EXPECTED_TROUBLESHOOTING_ENTRIES"; exit 1; }
+      - name: no duplicate troubleshooting rows
+        run: |
+          set -euo pipefail
+          dups=$(grep "^| [0-9]" runbook.md | cut -d'|' -f3 | sort | uniq -d)
+          [ -z "$dups" ] || { echo "::error::entri duplikat di runbook:"; echo "$dups"; exit 1; }
+          echo "no duplicates"
       - run: test -f SLA.md && test -f FAQ.md && echo "docs OK"
+      - run: git ls-files | grep -qE '\.xlsx$|^backup-.*\.sql$' \
+          && { echo "::error::artefak generated/berisi data ikut ter-commit"; exit 1; } \
+          || echo "no committed artifacts"

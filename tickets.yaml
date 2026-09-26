@@ -1,10 +1,13 @@
-# sumber kebenaran tiket (5 tiket). tools/build_tickets.py -> KosManager-Tickets.xlsx
+# sumber kebenaran tiket (4 tiket — API & infra).
+# TIK-03/TIK-04 (frontend) pindah ke kosmanager-dotnet-web ADR-004.
+# TIK-05 (CI qa) pindah ke kosmanager-dotnet-qa test-plan.md.
+# tools/build_tickets.py -> KosManager-Tickets.xlsx
 - id: TIK-01
   severity: high
   title: Login 500 — JWT secret < 256 bit (IDX10720)
   repro: login dengan secret 24 char
   fix: secret >= 32 char + .env.example menegaskan
-  prevention: "CI grep panjang secret (manual: README + runbook #1)"
+  prevention: "appsettings.json JWT_SECRET dikosongkan + CI gate menolak nilai terisi"
   status: closed
 - id: TIK-02
   severity: high
@@ -13,24 +16,17 @@
   fix: pin Pomelo 8.0.3 + EF 8.0.13
   prevention: pin versi di docs quickstart
   status: closed
-- id: TIK-03
+- id: TIK-06
   severity: high
-  title: Blazor login bounce + drawer hilang (prerender tanpa JS)
-  repro: login -> / -> /login
-  fix: prerender false + session storage + forceLoad + islands
-  prevention: ADR-004
+  title: Kredensial MySQL hardcoded di repo publik
+  repro: grep kospass di pipeline.py / backup-roundtrip.sh / docker-compose.yml
+  fix: semua kredensial via env + compose fail-fast tanpa env
+  prevention: "FAQ.md + .env.example + CI gate compose reject missing credentials"
   status: closed
-- id: TIK-04
+- id: TIK-07
   severity: medium
-  title: MudDrawer selalu overlay
-  repro: Mini + Open=true tanpa subscription
-  fix: rail custom + UiState
-  prevention: ADR-004
-  status: closed
-- id: TIK-05
-  severity: medium
-  title: CI qa merah — path relatif + assertion order-dependent
-  repro: push pertama/ kedua
-  fix: ${{ github.workspace }} absolut + >= 6
-  prevention: pola path absolut di semua workflow
+  title: Report Newman & artifact build ter-commit
+  repro: git ls-files | grep newman
+  fix: reports/ di-ignore, dipublish sebagai CI artifact
+  prevention: .gitignore + CI gate no committed reports
   status: closed

@@ -8,7 +8,7 @@ jobs:
       JWT_SECRET: ci-dummy-min-32-karakter-aman
       MYSQL_PASSWORD: ci-dummy-password
       MYSQL_ROOT_PASSWORD: ci-dummy-root
-      EXPECTED_TROUBLESHOOTING_ENTRIES: "19"
+      EXPECTED_TROUBLESHOOTING_ENTRIES: "10"
     steps:
       - uses: actions/checkout@v4
       - run: bash -n backup-roundtrip.sh && echo "syntax OK"

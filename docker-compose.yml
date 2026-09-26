@@ -2,10 +2,10 @@ services:
   mysql:
     image: mysql:8.4
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: kosmanager
       MYSQL_USER: kos
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-kospass}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
     ports:
       - "3308:3306"
     volumes:
@@ -18,13 +18,15 @@ services:
 
   api:
     build:
-      context: https://github.com/RakhaYandra/kosmanager-dotnet.git
+      # Default: local working tree. Override untuk build dari remote:
+      #   KOS_API_CONTEXT=https://github.com/RakhaYandra/kosmanager-dotnet.git docker compose up
+      context: ${KOS_API_CONTEXT:-../api}
       dockerfile: KosManager.Api/Dockerfile
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      DB_CONN: "server=mysql;port=3306;database=kosmanager;user=kos;password=${MYSQL_PASSWORD:-kospass}"
+      DB_CONN: "server=mysql;port=3306;database=kosmanager;user=kos;password=${MYSQL_PASSWORD:?set MYSQL_PASSWORD}"
       JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET min 32 char}
       NOTIFY_CHANNEL: mock
     ports:

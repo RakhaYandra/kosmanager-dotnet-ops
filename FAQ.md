@@ -12,8 +12,10 @@ dulu untuk Telegram asli.
 **Berapa lama data cache?** Dashboard 60 dtk, bills/queue 30 dtk; tulis
 apa pun langsung invalidate (baca README API).
 
-**Apakah data saya aman di demo?** Seed 100% fiktif; tanpa secret di repo;
-token Telegram hanya env sesaat.
+**Apakah data saya aman di demo?** Seed 100% fiktif; tidak ada credential nyusup
+di repo — `MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD`, dan `JWT_SECRET` semuanya
+wajib diisi via env (lihat `.env.example`), dan compose menolak start tanpa itu.
+Token Telegram hanya env sesaat.
 
 **Butuh server?** Tidak untuk demo lokal. Scheduler + webhook 24 jam butuh
 server (Fase non-$0, belum dikerjakan).

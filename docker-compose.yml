@@ -20,7 +20,7 @@ services:
     build:
       # Default: local working tree. Override untuk build dari remote:
       #   KOS_API_CONTEXT=https://github.com/RakhaYandra/kosmanager-dotnet.git docker compose up
-      context: ${KOS_API_CONTEXT:-../api}
+      context: ${KOS_API_CONTEXT:-../../api}
       dockerfile: KosManager.Api/Dockerfile
     depends_on:
       mysql:

@@ -1,0 +1,21 @@
+# Dump DB dari backup-roundtrip.sh — mengandung data produksi
+backup-*.sql
+*.sql.gz
+
+# Laporan di-generate dari tickets.yaml
+KosManager-Tickets.xlsx
+*.xlsx
+
+# Report PDF
+pdf/
+*.pdf
+
+__pycache__/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
